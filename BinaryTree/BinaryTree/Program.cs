@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BinaryTree
+﻿namespace BinaryTree
 {
     class Program
     {
         static void Main(string[] args)
         {
+            Tree binaryTree = new Tree();
+            binaryTree.CreateTree(4);
         }
     }
 }

@@ -18,6 +18,9 @@
         #endregion
 
         #region Node Methods
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public Node()
         {
             Parent = null;
@@ -27,18 +30,11 @@
             Left = true;
         }
 
-        public Node(Node leftChild, Node rightChild, Node leftNeighbor, Node rightNeighbor, bool left)
-        {
-            LeftChild = leftChild;
-            RightChild = rightChild;
-            LeftNeighbor = leftNeighbor;
-            RightNeighbor = rightNeighbor;
-            Left = left;
-
-            CalculateValue();
-        }
-
-        private void CalculateValue()
+        /// <summary>
+        /// Determines value based off of whether or not this node
+        /// is the Root, a left node, or a right node.
+        /// </summary>
+        public void CalculateValue()
         {
             // Root node always has value 1
             if (IsRoot())
@@ -80,10 +76,10 @@
         /// If we reach the root node we know to go back down while searching.
         /// </summary>
         /// <returns>Whether or not this node is at the top of the tree.</returns>
-        private bool IsRoot()
+        public bool IsRoot()
         {
-            // If Neighbor is null we are at the top of the tree because only root doesn't have neighbor.
-            return LeftNeighbor == null;
+            // If Parent is null we are at the top of the tree because only root doesn't have parent.
+            return Parent == null;
         }
 
         /// <summary>
@@ -91,7 +87,7 @@
         /// If we reach a leaf node we know to go back up while searching.
         /// </summary>
         /// <returns>Whether or not this node is at the bottom of the tree.</returns>
-        private bool IsLeaf()
+        public bool IsLeaf()
         {
             // If LeftChild is null, RightChild is null, and we are at the bottom of the tree.
             return LeftChild == null;
