@@ -1,14 +1,16 @@
-﻿namespace BinaryTree
+﻿using System;
+
+namespace BinaryTree
 {
     /// <summary>
     /// Author: Dante Nardo
-    /// Last Modified: 11/17/2017
+    /// Last Modified: 11/28/2017
     /// Purpose: Creates a binary tree of integers with a set depth.
     /// </summary>
     class Tree
     {
         #region Tree Members
-        public Node Root { get; set; }          // The parent node in the binary tree.
+        public Node Root { get; private set; }  // The parent node in the binary tree.
         public int Depth { get; private set; }  // The depth of the current generated tree.
         #endregion
 
@@ -23,12 +25,13 @@
         {
             // Instantiate root, depth, and current node
             Depth = depth;
+            depth = 1;
             Root = new Node();
             Root.CalculateValue();
+            Node start = Root;
+            Node current = start;
 
-            // A recursive function that creates all of the tree branches
             CreateBranches(Root, 1);
-            CompleteNodes(Root, 1);
         }
 
         /// <summary>
@@ -54,6 +57,10 @@
             current.RightChild.LeftNeighbor = current.LeftChild;
             current.RightChild.Parent = current;
 
+            // Calculate initial values
+            current.LeftChild.CalculateValue();
+            current.RightChild.CalculateValue();
+
             // Recursive end condition: stop creating branches once we've reached the end
             if (depth < Depth-1)
             {
@@ -64,41 +71,53 @@
         }
 
         /// <summary>
-        /// We need all of the nodes to be created in order to assign all of their neighbors
-        /// and then from there we can determine each node's value.
+        /// Recursive function that prints the current line and calls itself on the next line if it exists.
         /// </summary>
-        /// <param name="current">The current node to complete the data for</param>
-        /// <param name="depth">The current depth to determine the end of the recursive function</param>
-        private void CompleteNodes(Node current, int depth)
+        /// <param name="start">The starting node</param>
+        /// <param name="depth">The current depth</param>
+        public void PrintTree(Node start, int depth)
         {
-            // Do not check the Root since it has no neighbors
-            // Do not check the Leaves since their parents calculate their neighbors for them
-            if (!current.IsRoot() && !current.IsLeaf())
+            // Necessary for pretty printing
+            int incr = 1;
+            int extraSpace = depth * incr;
+            for (int i = 0; i < extraSpace; i++)
             {
-                // Find left's left neighbor
-                if (current.Parent.LeftNeighbor != null &&
-                    current.Parent.LeftNeighbor.RightChild != null)
-                {
-                    current.LeftChild.LeftNeighbor = current.Parent.LeftNeighbor.RightChild;
-                }
-
-                // Find right's right neighbor
-                if (current.Parent.RightNeighbor != null &&
-                    current.Parent.RightNeighbor.LeftChild != null)
-                {
-                    current.RightChild.RightNeighbor = current.Parent.RightNeighbor.LeftChild;
-                }
-
-                // Determine the value for both child nodes
-                current.LeftChild.CalculateValue();
-                current.RightChild.CalculateValue();
+                Console.Write(" ");
             }
 
-            // Complete their child nodes if we are not at the lowest depth
-            if (depth < Depth)
+            // Print the leftmost value at this depth.
+            Node current = start;
+            Console.Write(current.Value + " ");
+
+            // Continue printing until there are no more nodes to the right.
+            int index = 1;
+            while (current.RightNeighbor != null)
             {
-                CompleteNodes(current.LeftChild, ++depth);
-                CompleteNodes(current.RightChild, ++depth);
+                current = current.RightNeighbor;
+                Console.Write(current.Value + " ");
+                index++;
+
+                if (current.Value == 2)
+                {
+                    index++;
+                    index--;
+                }
+
+                if (index == 2)
+                {
+                    for (int i = 0; i < extraSpace - 1; i++)
+                    {
+                        Console.Write(" ");
+                    }
+                    index = 0;
+                }
+            }
+
+            // Print next line if it exists
+            if (start.LeftChild != null)
+            {
+                Console.WriteLine();
+                PrintTree(start.LeftChild, depth-1);
             }
         }
         #endregion
