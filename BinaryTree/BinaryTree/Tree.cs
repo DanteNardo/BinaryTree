@@ -4,7 +4,7 @@ namespace BinaryTree
 {
     /// <summary>
     /// Author: Dante Nardo
-    /// Last Modified: 11/28/2017
+    /// Last Modified: 11/29/2017
     /// Purpose: Creates a binary tree of integers with a set depth.
     /// </summary>
     class Tree
@@ -21,6 +21,10 @@ namespace BinaryTree
             Depth = 0;
         }
 
+        /// <summary>
+        /// Sets the initial Root values, then calls CreateBranches and FinishReferences.
+        /// </summary>
+        /// <param name="depth">The depth of the new tree to create</param>
         public void CreateTree(int depth)
         {
             // Instantiate root, depth, and current node
@@ -32,6 +36,7 @@ namespace BinaryTree
             Node current = start;
 
             CreateBranches(Root, 1);
+            FinishReferences(Root, 1);
         }
 
         /// <summary>
@@ -62,7 +67,7 @@ namespace BinaryTree
             current.RightChild.CalculateValue();
 
             // Recursive end condition: stop creating branches once we've reached the end
-            if (depth < Depth-1)
+            if (depth < Depth - 1)
             {
                 depth++;
                 CreateBranches(current.LeftChild, depth);
@@ -71,53 +76,67 @@ namespace BinaryTree
         }
 
         /// <summary>
+        /// Finds every missing LeftNeighbor and RightNeighbor reference.
+        /// Recursive function that instantiates missing data that relies on completed branches.
+        /// Must be run after CreateBranches because not all nodes exist before (or during) that function.
+        /// </summary>
+        /// <param name="current">The current node to update references of</param>
+        /// <param name="depth">The current depth to determine the end of the recursive function</param>
+        private void FinishReferences(Node current, int depth)
+        {
+            current.LeftChild.FindLeft();
+            current.LeftChild.FindRight();
+            current.RightChild.FindLeft();
+            current.RightChild.FindRight();
+
+            if (depth < Depth - 1)
+            {
+                depth++;
+                FinishReferences(current.LeftChild, depth);
+                FinishReferences(current.RightChild, depth);
+            }
+        }
+
+        /// <summary>
         /// Recursive function that prints the current line and calls itself on the next line if it exists.
         /// </summary>
         /// <param name="start">The starting node</param>
-        /// <param name="depth">The current depth</param>
+        /// <param name="depth">The current depth to determine the end of the recursive function</param>
         public void PrintTree(Node start, int depth)
         {
-            // Necessary for pretty printing
-            int incr = 1;
-            int extraSpace = depth * incr;
-            for (int i = 0; i < extraSpace; i++)
-            {
-                Console.Write(" ");
-            }
+            #region Pretty Printing 1
+            //int maxSpace = 2 * Depth * Depth + 1;
+            //int incr = maxSpace / (depth + 1);
+            //for (int i = 0; i < incr; i++)
+            //{
+            //    Console.Write(" ");
+            //}
+            #endregion
 
             // Print the leftmost value at this depth.
             Node current = start;
             Console.Write(current.Value + " ");
 
+            #region Pretty Printing 2
+            //for (int i = 0; i < incr; i++)
+            //{
+            //    Console.Write(" ");
+            //}
+            #endregion
+
             // Continue printing until there are no more nodes to the right.
-            int index = 1;
             while (current.RightNeighbor != null)
             {
                 current = current.RightNeighbor;
                 Console.Write(current.Value + " ");
-                index++;
-
-                if (current.Value == 2)
-                {
-                    index++;
-                    index--;
-                }
-
-                if (index == 2)
-                {
-                    for (int i = 0; i < extraSpace - 1; i++)
-                    {
-                        Console.Write(" ");
-                    }
-                    index = 0;
-                }
             }
 
             // Print next line if it exists
-            if (start.LeftChild != null)
+            if (depth < Depth)
             {
+                depth++;
                 Console.WriteLine();
-                PrintTree(start.LeftChild, depth-1);
+                PrintTree(start.LeftChild, depth);
             }
         }
         #endregion

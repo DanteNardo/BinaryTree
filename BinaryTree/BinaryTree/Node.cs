@@ -2,7 +2,7 @@
 {
     /// <summary>
     /// Author: Dante Nardo
-    /// Last Modified: 11/28/2017
+    /// Last Modified: 11/29/2017
     /// Purpose: Acts as a single node in a binary tree. Holds data that creates tree hierarchy.
     /// </summary>
     class Node
@@ -15,30 +15,12 @@
         public int Value            { get; private set; }   // The value of the node at this location in the tree
 
         // The node directly to the left on this depth level
-        // Finds the left neighbor if it is null
         private Node m_leftNeighbor;
         public Node LeftNeighbor
         {
             get
             {
-                if (m_leftNeighbor != null)
-                {
-                    return m_leftNeighbor;
-                }
-                else
-                {
-                    // Finds the left neighbor if it does not currently exist
-                    // Recalculates value if necessary
-                    if (Parent != null &&
-                        Parent.LeftNeighbor != null &&
-                        Parent.LeftNeighbor.RightChild != null)
-                    {
-                        m_leftNeighbor = Parent.LeftNeighbor.RightChild;
-                        m_leftNeighbor.CalculateValue();
-                        CalculateValue();
-                    }
-                    return m_leftNeighbor;
-                }
+                return m_leftNeighbor;
             }
             set
             {
@@ -47,30 +29,12 @@
         }
 
         // The node directly to the right on this depth level
-        // Finds the right neighbor if it is null
         private Node m_rightNeighbor;
         public Node RightNeighbor
         {
             get
             {
-                if (m_rightNeighbor != null)
-                {
-                    return m_rightNeighbor;
-                }
-                // Finds the right neighbor if it does not currently exist
-                // Recalculates value if necessary
-                else
-                {
-                    if (Parent != null &&
-                        Parent.RightNeighbor != null &&
-                        Parent.RightNeighbor.LeftChild != null)
-                    {
-                        m_rightNeighbor = Parent.RightNeighbor.LeftChild;
-                        m_rightNeighbor.CalculateValue();
-                        CalculateValue();
-                    }
-                    return m_rightNeighbor;
-                }
+                return m_rightNeighbor;
             }
             set
             {
@@ -91,6 +55,42 @@
             LeftNeighbor = null;
             Left = true;
             Value = -1;
+        }
+
+        /// <summary>
+        /// Finds the left neighbor if missing.
+        /// </summary>
+        public void FindLeft()
+        {
+            if (m_leftNeighbor == null)
+            {
+                if (Parent != null &&
+                    Parent.LeftNeighbor != null &&
+                    Parent.LeftNeighbor.RightChild != null)
+                {
+                    m_leftNeighbor = Parent.LeftNeighbor.RightChild;
+                    m_leftNeighbor.CalculateValue();
+                    CalculateValue();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Finds the right neighbor if missing.
+        /// </summary>
+        public void FindRight()
+        {
+            if (m_rightNeighbor == null)
+            {
+                if (Parent != null &&
+                    Parent.RightNeighbor != null &&
+                    Parent.RightNeighbor.LeftChild != null)
+                {
+                    m_rightNeighbor = Parent.RightNeighbor.LeftChild;
+                    m_rightNeighbor.CalculateValue();
+                    CalculateValue();
+                }
+            }
         }
 
         /// <summary>
